@@ -1,7 +1,7 @@
 CC = gcc
-CFLAGS = -g -O0 -Wall -Wextra -Werror -std=c99 -pedantic
-OBJ = main.o
-DEPS =
+CFLAGS = -g -O0 -Wall -Wextra -Werror -std=c99 -pedantic -pthread
+OBJ = main.o grid.o
+DEPS = grid.h
 VFLAGS = --leak-check=full --leak-resolution=high --show-reachable=yes --track-origins=yes
 EXEC = ./exec < toys/toy1
 TIMED_RUN = time ./exec < toys/toy1
