@@ -27,13 +27,18 @@ void calculatePlan(int **grid, int x, int y, int threads_number){
         printf("[%d]", plot->grid_line[cu]);
     }
     printf("\n");
-    
+
     for(i=0; i<threads_number; i++){
         pthread_create(&threads[i], NULL, bestInLine, (void*)&plot[i]);
     }
     for(i=0; i<threads_number; i++){
         pthread_join(threads[i], NULL);
     }
+
+    for(int cu=0; cu<plot->y; cu++){
+        printf("[%d]", plot->answer[cu]);
+    }
+    printf("\n");
 }
 
 void bestInLine(void* plot){
@@ -65,10 +70,8 @@ void bestInLine(void* plot){
         }
     }
 
-    printf("Linha %d\n", plot_p->tid);
     for(int i=0; i<plot_p->y; i++)
-            printf("[%d]", aux[i]);
-    printf("\n");
+            plot_p->answer[i] = aux[i];
 
     pthread_exit(NULL);
 }

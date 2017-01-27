@@ -9,7 +9,7 @@ int main(int argc, char *argv[]){
 
     //numero de Threads passado por linha de comando
     // threads_number = atoi(argv[1]);
-    threads_number = 1;
+    threads_number = 2;
 
     // Dimensões do Grid
     scanf("%d %d", &m, &n);
