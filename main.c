@@ -8,8 +8,7 @@ int main(int argc, char *argv[]){
     int m, n, **grid, threads_number;
 
     //numero de Threads passado por linha de comando
-    // threads_number = atoi(argv[1]);
-    threads_number = 5;
+    threads_number = atoi(argv[1]);
 
     // Dimensões do Grid
     scanf("%d %d", &m, &n);
@@ -19,6 +18,8 @@ int main(int argc, char *argv[]){
     fillGrid(m,n,grid);
 
     calculatePlan(grid, m, n, threads_number);
+
+    freeGrid(m, grid);
 
     return 0;
 }

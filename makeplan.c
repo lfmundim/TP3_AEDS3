@@ -4,16 +4,31 @@
 #include "makeplan.h"
 #include "grid.h"
 
-void bestInLine(void *plot){
-    plot_t *plotaux = (plot_t*)plot;
+void endstep(int *array, int size){
     int sum;
 
-    // for(int i=0; i<plotaux->x; i++){
-    //     for(int j=0; j<plotaux->y; j++){
-    //         printf("[%d]", plotaux->matrix[i][j]);
-    //     }
-    //     printf("\n");
-    // }
+    for(int i=1; i<size; i++){
+        if(i==1){
+            if(array[i]>array[i-1])
+                continue;
+            else
+                array[i] = array[i-1];
+        }
+        else{
+            sum = array[i] + array[i-2];
+            if(sum>array[i-1])
+                array[i] = sum;
+            else
+                array[i] = array[i-1];
+        }
+    }
+    printf("%d\n", array[size-1]);
+}
+
+
+void* bestInLine(void *plot){
+    plot_t *plotaux = (plot_t*)plot;
+    int sum;
 
     for(int i=plotaux->tid; i<plotaux->x; i+=plotaux->threads_number){
         for(int j=1; j<plotaux->y; j++){
@@ -31,17 +46,9 @@ void bestInLine(void *plot){
                     plotaux->matrix[i][j] = plotaux->matrix[i][j-1];
             }
         }
-        // for(int j=0; j<plotaux->y; j++)
-        //     printf("[%d]", plotaux->matrix[i][j]);
-        // printf("\n");
-    }
-    // for(int i=0; i<plotaux->x; i++){
-    //     for(int j=0; j<plotaux->y; j++){
-    //         printf("[%d]", plotaux->matrix[i][j]);
-    //     }
-    //     printf("\n");
-    // }
 
+    }
+    pthread_exit(NULL);
 }
 
 void calculatePlan(int **grid, int x, int y, int threads_number){
@@ -55,7 +62,7 @@ void calculatePlan(int **grid, int x, int y, int threads_number){
         limit = threads_number;
 
     plot = (plot_t*)calloc(limit, sizeof(plot_t));
-    threads = (pthread_t)calloc(limit, sizeof(pthread_t));
+    threads = (pthread_t*)calloc(limit, sizeof(pthread_t));
     final = makeArray(x);
 
     for(k=0; k<limit; k++){
@@ -86,9 +93,12 @@ void calculatePlan(int **grid, int x, int y, int threads_number){
             final[i] = plot[aux].matrix[i][y-1];
         }
     }
-
-    for(int i=0; i<x; i++)
-        printf("[%d]", final[i]);
-    printf("\n");
-
+    endstep(final, x);
+    free(threads);
+    for(int a=0; a<limit; a++){
+        freeGrid(x, plot[a].matrix);
+        free(plot[a].answer);
+    }
+    free(plot);
+    free(final);
 }

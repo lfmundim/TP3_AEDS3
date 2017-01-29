@@ -12,7 +12,9 @@ typedef struct{
     int tid;
 }plot_t;
 
-void bestInLine(void *plot);
+void endstep(int *array, int size);
+
+void* bestInLine(void *plot);
 
 void calculatePlan(int **grid, int x, int y, int threads_number);
 
