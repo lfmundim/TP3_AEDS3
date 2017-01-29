@@ -4,74 +4,56 @@
 #include "makeplan.h"
 #include "grid.h"
 
+void bestInLine(void *plot){
+    plot_t *plotaux = (plot_t*)plot;
+    int loops = plotaux->x/plotaux->threads_number;
+    int endloop = loops*(plotaux->tid+1);
+    loops = plotaux->tid*loops;
+    int *aux = makeArray(plotaux->y);
+    int sum;
 
-void calculatePlan(int **grid, int x, int y, int threads_number){
-    int i, j;
-    plot_t *plot;
-    pthread_t threads[threads_number];
-
-    plot = (plot_t*)calloc(threads_number,sizeof(plot_t));
-
-    for(i=0; i<threads_number; i++){
-        plot[i].grid_line = makeArray(x);
-        for(j=0; j<y; j++)
-            plot[i].grid_line[j] = grid[i][j];
-        plot[i].threads_number = threads_number;
-        plot[i].x = x;
-        plot[i].y = y;
-        plot[i].answer = makeArray(x);
-        plot[i].tid = i;
+    for(int i=loops; i<endloop; i++){
+        for(int j=0; j<plotaux->y; j++){
+            if(i==0)
+                aux[j] = plotaux->matrix[i][j];
+            if(i==1){
+                if(plotaux->matrix[i][j]>plotaux->matrix[i][j-1])
+                    aux[j] = plotaux->matrix[i][j];
+                else
+                    aux[j] = plotaux->matrix[i][j-1];
+            }
+            else{
+                sum = plotaux->matrix[i][j] + plotaux->matrix[i][j-2];
+                if(sum>plotaux->matrix[i][j-1])
+                    aux[j] = sum;
+                else
+                    aux[j] = plotaux->matrix[i][j-1];
+            }
+        }
     }
-
-    for(int cu=0; cu<plot->y; cu++){
-        printf("[%d]", plot->grid_line[cu]);
-    }
+    for(int i=0; i<plotaux->y; i++)
+        printf("[%d]", aux[i]);
     printf("\n");
 
-    for(i=0; i<threads_number; i++){
-        pthread_create(&threads[i], NULL, bestInLine, (void*)&plot[i]);
-    }
-    for(i=0; i<threads_number; i++){
-        pthread_join(threads[i], NULL);
-    }
-
-    for(int cu=0; cu<plot->y; cu++){
-        printf("[%d]", plot->answer[cu]);
-    }
-    printf("\n");
 }
 
-void bestInLine(void* plot){
-    plot_t *plot_p = (plot_t*)plot;
-    int *aux, sum;
-    aux = makeArray(plot_p->y);
+void calculatePlan(int **grid, int x, int y, int threads_number){
+    plot_t plot;
+    pthread_t threads[threads_number];
 
-    // for(int cu=0; cu<plot_p->y; cu++){
-    //     printf("[%d]", plot_p->grid_line[cu]);
-    // }
-    // printf("\n");
+    plot.matrix = makeGrid(x,y);
+    for(int i=0; i<x; i++)
+        for(int j=0; j<y; j++)
+            plot.matrix[i][j] = grid[i][j];
+    plot.threads_number = threads_number;
+    plot.x = x;
+    plot.y = y;
+    plot.answer = makeArray(x);
 
-    for(int i=0; i<plot_p->y; i++){
-        if(i==0){
-            aux[i]=plot_p->grid_line[i];
-        }
-        else if(i==1){
-            if(plot_p->grid_line[1]>plot_p->grid_line[0])
-                aux[i] = plot_p->grid_line[1];
-            else
-                aux[i] = plot_p->grid_line[0];
-        }
-        else{
-            sum = plot_p->grid_line[i]+aux[i-2];
-            if(sum>aux[i-1])
-                aux[i] = sum;
-            else
-                aux[i] = aux[i-1];
-        }
+    for(int i=0; i<threads_number; i++){
+        plot.tid=i;
+        pthread_create(&threads[i], NULL, bestInLine, (void*)&plot);
     }
-
-    for(int i=0; i<plot_p->y; i++)
-            plot_p->answer[i] = aux[i];
-
-    pthread_exit(NULL);
+    for(int i=0; i<threads_number; i++)
+        pthread_join(threads[i], NULL);
 }

@@ -6,10 +6,11 @@
 
 typedef struct{
     int *grid_line;
+    int **matrix;
     int x,y;
     int threads_number;
     int *answer;
-    int tid;
+    int tid, begin, end;
 }plot_t;
 
 void bestInLine(void *plot);
