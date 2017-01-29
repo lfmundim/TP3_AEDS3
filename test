@@ -1,0 +1,10 @@
+./tp3 3 < toys/toy1 && cat results_toys/toy1
+./tp3 3 < toys/toy2 && cat results_toys/toy2
+./tp3 3 < toys/toy3 && cat results_toys/toy3
+./tp3 3 < toys/toy4 && cat results_toys/toy4
+./tp3 3 < toys/toy5 && cat results_toys/toy5
+./tp3 3 < toys/toy6 && cat results_toys/toy6
+./tp3 3 < toys/toy7 && cat results_toys/toy7
+./tp3 3 < toys/toy8 && cat results_toys/toy8
+./tp3 3 < toys/toy9 && cat results_toys/toy9
+./tp3 3 < toys/toy10 && cat results_toys/toy10

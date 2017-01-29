@@ -6,6 +6,7 @@
 
 int main(int argc, char *argv[]){
     int m, n, **grid, threads_number;
+    (void)argc;
 
     //numero de Threads passado por linha de comando
     threads_number = atoi(argv[1]);
