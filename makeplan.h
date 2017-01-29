@@ -5,12 +5,11 @@
 #include <stdlib.h>
 
 typedef struct{
-    int *grid_line;
     int **matrix;
     int x,y;
     int threads_number;
     int *answer;
-    int tid, begin, end;
+    int tid;
 }plot_t;
 
 void bestInLine(void *plot);
